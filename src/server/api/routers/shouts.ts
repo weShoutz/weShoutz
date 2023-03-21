@@ -7,7 +7,13 @@ import {
 } from "@/server/api/trpc";
 import { type Post } from "@prisma/client";
 interface DisplayPost extends Post {
-    author:string
+    author:string;
+    authorId:string;
+    createdAt: Date;
+    id: number;
+    recipient: string;
+    title: string;
+    message: string;
 }
 /*
 model Post {
