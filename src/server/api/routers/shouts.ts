@@ -66,7 +66,7 @@ export const shoutsRouter = createTRPCRouter({
             res.push({...posts[i], author: name});
             console.log(author.name);
         }
-        console.log(res);
+        // console.log(res);
         return res;
     } catch (error) {
         
@@ -102,6 +102,7 @@ export const shoutsRouter = createTRPCRouter({
             authorId: ctx.session?.user.id,
         }
       })
+      return 'success';
     } catch (error) {
       console.log('error', error);
     }
