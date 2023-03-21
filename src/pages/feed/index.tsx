@@ -43,14 +43,14 @@ const Media: React.FC = () => {
     posts.data.forEach((el, i) => {
       console.log(el);
       renderItems.push(
-        <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
+        <div key={`post-${i}`} className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
           <p>{el.author}</p>
           <div>
-            {image && (
+            {el.authorPic && (
               <img
                 alt="some-alt-text"
                 className="max-w-[3rem]"
-                src={image}
+                src={el.authorPic}
               ></img>
             )}
           </div>
