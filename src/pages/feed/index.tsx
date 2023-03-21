@@ -56,13 +56,13 @@ const Media: React.FC = () => {
           </div>
           <h3 className="text-2xl font-bold">{el.title}</h3>
           <div className="text-lg">{el.message}</div>
-          <button
+          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author && <button
             className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
             // onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {/* {sessionData ? "Sign out" : "Sign in"} */}
             Edit
-          </button>
+          </button>}
         </div>
       );
     });
