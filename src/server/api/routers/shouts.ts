@@ -57,7 +57,7 @@ export const shoutsRouter = createTRPCRouter({
     try {
         const posts = await ctx.prisma.post.findMany();
         const res: DisplayPost[] = [];
-        for(let i = 0; i < posts.length; i++) {
+        for(let i = posts.length - 1; i >= 0; i--) {
             const author = await ctx.prisma.user.findFirstOrThrow({
                 where: {
                     id: posts[i]?.authorId}});
