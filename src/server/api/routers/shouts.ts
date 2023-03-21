@@ -9,6 +9,40 @@ import { type Post } from "@prisma/client";
 interface DisplayPost extends Post {
     author:string
 }
+/*
+model Post {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    message   String   @default("")
+    recipient String   @default("")
+    author    User     @relation(fields: [authorId], references: [id])
+    authorId  String
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    posts         Post[]
+}
+
+*/
+const userSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+});
+const postSchema = z.object({
+    id: z.number(),
+    createdAt: z.string().datetime(),
+    message: z.string(),
+    recipient: z.string(),
+    authorId: z.string()
+});
 
 export const shoutsRouter = createTRPCRouter({
 
@@ -21,6 +55,7 @@ export const shoutsRouter = createTRPCRouter({
                 where: {
                     id: posts[i]?.authorId}});
             const name = author !== null ? author.name : "";
+            // const validAuthor = postSchema.parse(author);
             res.push({...posts[i], author: name});
             console.log(author.name);
         }
