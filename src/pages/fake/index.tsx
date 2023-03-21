@@ -10,7 +10,8 @@ const Home: NextPage = () => {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
 
-  const posts = api.shouts.getAll.useQuery();
+  const posts = api.shouts.getAll.useQuery({id: 23});
+  console.log('this is posts: ', posts);
   // const deleteMutation = api.shouts.deleteShout.useMutation();
   // const updateMutation = api.shouts.updateShout.useMutation();
   // const deletedPost = deleteMutation.mutate({id: 2});
