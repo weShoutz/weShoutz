@@ -11,8 +11,7 @@ datasource db {
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    // url      = env("postgres://ikhoktcx:AY53Cggr9_kJcX0MUW8nla01R86YTrPp@ruby.db.elephantsql.com/ikhoktcx")
-    url      = env("DATABASE_URL")
+    url = env("DATABASE_URL")
 }
 
 model Post {

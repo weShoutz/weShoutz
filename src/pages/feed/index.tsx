@@ -4,6 +4,10 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { ReactElement, JSXElementConstructor, ReactFragment } from "react";
+import { wrapper } from "../../store/store";
+import { selectPostState, setPostState } from "../../store/postSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
   //   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -30,18 +34,36 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+// export default Home;
+export default wrapper.withRedux(Home);
 
 const Media: React.FC = () => {
   const posts = api.shouts.getAll.useQuery();
   const { data: sessionData } = useSession();
   const image = sessionData?.user.image;
 
+  const postState = useSelector(selectPostState);
+  const dispatch = useDispatch();
+
+  
+  // useEffect(() => {
+    if(posts.data){
+      const latestTen = posts.data.slice(0, 10);
+      //console.log(latestTen, 'line 52')
+      dispatch(setPostState(latestTen));
+      console.log('from line 54', postState)
+    }
+   
+
+  // }, []);
+  
+
+
   const renderItems: JSX.Element[] = [];
 
   if (posts.data) {
     posts.data.forEach((el, i) => {
-      console.log(el);
+      //console.log(el);
       renderItems.push(
         <div key={`post-${i}`} className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
           <p>{el.author}</p>
