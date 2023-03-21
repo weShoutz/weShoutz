@@ -6,6 +6,7 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import { type Post } from "@prisma/client";
+import { Input } from "postcss";
 interface DisplayPost extends Post {
     author:string;
     authorId:string;
@@ -53,21 +54,63 @@ const postSchema = z.object({
 
 export const shoutsRouter = createTRPCRouter({
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure
+  .input(z.object({ id: z.number().optional() }))
+  .query(async ({ input, ctx }) => {
     try {
-        const posts = await ctx.prisma.post.findMany();
-        const res: DisplayPost[] = [];
-        for(let i = posts.length - 1; i >= 0; i--) {
-            const author = await ctx.prisma.user.findFirstOrThrow({
-                where: {
-                    id: posts[i]?.authorId}});
-            const name = author !== null ? author.name : "";
-            // const validAuthor = postSchema.parse(author);
-            res.push({...posts[i], author: name});
-            console.log(author.name);
+        // sort the data 
+        //if start id not provided
+        if(!input.id){
+            //get the posts with the largest 15 ids
+            const posts = await ctx.prisma.post.findMany({
+                take: 15,
+                orderBy: 
+                {
+                id: 'desc',
+                },
+                include: {
+                    author: {
+                        select: {
+                            name:true,
+                        }
+                    }
+                },
+            });
+            return posts;
+            
+        } else {
+            const posts = await ctx.prisma.post.findMany({
+                take: 15,
+                cursor: {
+                  id: input.id
+                },
+                orderBy:
+                {
+                  id: 'desc',
+                },
+                include: {
+                  author: {
+                    select: {
+                      name:true,
+                    }
+                  }
+                },
+              });
+          return posts;
         }
-        // console.log(res);
-        return res;
+        // const posts = await ctx.prisma.post.findMany();
+        // const res: DisplayPost[] = [];
+        // for(let i = posts.length - 1; i >= 0; i--) {
+        //     const author = await ctx.prisma.user.findFirstOrThrow({
+        //         where: {
+        //             id: posts[i]?.authorId}});
+        //     const name = author !== null ? author.name : "";
+        //     // const validAuthor = postSchema.parse(author);
+        //     res.push({...posts[i], author: name});
+        //     console.log(author.name);
+        // }
+        // // console.log(res);
+        // return res;
     } catch (error) {
         
     }
@@ -96,6 +139,7 @@ export const shoutsRouter = createTRPCRouter({
   .mutation(async ({ input, ctx }) => {
     try{
       console.log('deleting message');
+      //todo why deletemany?????
       await ctx.prisma.post.deleteMany({
         where: {
             id: input.id,
