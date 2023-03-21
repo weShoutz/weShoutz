@@ -15,13 +15,14 @@ const Home: NextPage = () => {
   const handleClick = (message: string, recipient: string, title: string) => {
     console.log('message:' + message, 'title:' + title);
     //api.shouts.postShout.useQuery({ message, recipient, title }) 
-    handleItemClick(message, recipient, title);
+    const pic = sessionData?.user.image || '';
+    handleItemClick(message, recipient, title, pic);
   };
 
   const mutation = api.shouts.postShout.useMutation();
-  const handleItemClick = (message: string, recipient: string, title: string) => {
-    const name = 'John Doe';
-    mutation.mutate({ message, recipient, title });
+  const handleItemClick = (message: string, recipient: string, title: string, pic?: string) => {
+    const authorPic = pic ? pic : '';
+    mutation.mutate({ message, recipient, title, authorPic });
   };
 
   return (

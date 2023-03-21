@@ -23,6 +23,7 @@ model Post {
     recipient String   @default("")
     author    User     @relation(fields: [authorId], references: [id])
     authorId  String
+    authorPic String?
 }
 
 model Example {
