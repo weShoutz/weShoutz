@@ -11,6 +11,13 @@ const Home: NextPage = () => {
   const [message, setMessage] = useState('');
 
   const posts = api.shouts.getAll.useQuery();
+  // const deleteMutation = api.shouts.deleteShout.useMutation();
+  // const updateMutation = api.shouts.updateShout.useMutation();
+  // const deletedPost = deleteMutation.mutate({id: 2});
+  //.input(z.object({ id: z.number(), message: z.string(), recipient: z.string(), title: z.string(), created_at: z.string().datetime().optional() }))
+  // const updatePost = updateMutation.mutate({id: 1, message: "hi this is a new msg", recipient: "newmsgrecipient", title: "newtitle"});
+  // console.log(deletedPost);
+  
 
   const handleClick = (message: string, recipient: string, title: string) => {
     console.log('message:' + message, 'title:' + title);

@@ -66,7 +66,7 @@ export const shoutsRouter = createTRPCRouter({
             res.push({...posts[i], author: name});
             console.log(author.name);
         }
-        console.log(res);
+        // console.log(res);
         return res;
     } catch (error) {
         
@@ -89,6 +89,46 @@ export const shoutsRouter = createTRPCRouter({
         })
     } catch (error) {
         console.log('error', error);
+    }
+  }),
+  deleteShout: protectedProcedure
+  .input(z.object({ id: z.number() }))
+  .mutation(async ({ input, ctx }) => {
+    try{
+      console.log('deleting message');
+      await ctx.prisma.post.deleteMany({
+        where: {
+            id: input.id,
+            authorId: ctx.session?.user.id,
+        }
+      })
+      return 'success';
+    } catch (error) {
+      console.log('error', error);
+    }
+  }),
+
+  updateShout: protectedProcedure
+  .input(z.object({ id: z.number(), message: z.string(), recipient: z.string(), title: z.string(), created_at: z.string().datetime().optional() }))
+  .mutation(async ({ input, ctx }) => {
+    try{
+      console.log('deleting message');
+      // why delete many instead of delete?
+      await ctx.prisma.post.updateMany({
+        where: {
+            id: input.id,
+            authorId: ctx.session?.user.id,
+        },
+        data: {
+            authorId: ctx.session?.user.id,
+            message: input.message,
+            recipient: input.recipient,
+            createdAt: input.created_at,
+            title: input.title,
+        }
+      })
+    } catch (error) {
+      console.log('error', error);
     }
   }),
 
