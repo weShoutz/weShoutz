@@ -7,6 +7,9 @@ import { api } from "@/utils/api";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const user = api.example.addMsg.useQuery({ text: "hello hello hello" });
+  const message = api.shouts.postShout.useQuery({message: "hello", recipient: "Salem"});
+  const get = api.shouts.getAll.useQuery();
 
   return (
     <>
