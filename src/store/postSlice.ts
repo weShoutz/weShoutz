@@ -44,27 +44,24 @@ export const postSlice = createSlice({
     // Action to set the authentication status
     setPostState(state, action) {
       console.log('reducer activated', state, action);
-      const stateOne: PostState = action.payload;
-      console.log(stateOne, 'line 48')
-      const newState = state.posts.concat(stateOne)
+      const newState = state.posts.concat(action.payload)
       state.posts = newState;
-      // console.log(state.posts, 'line 51')
     },
 
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
-  extraReducers: {
-    [HYDRATE]: (state, action): PostState => {
-      return {
-        ...state,
-        ...action.payload.posts,
-      };
-    },
-  },
+  // extraReducers: {
+  //   [HYDRATE]: (state, action): PostState => {
+  //     return {
+  //       ...state,
+  //       ...action.payload.posts,
+  //     };
+  //   },
+  // },
 });
 
 export const { setPostState } = postSlice.actions;
 
-export const selectPostState = (state: AppState) => state.posts.postState;
+export const selectPostState = (state: AppState) => state.posts.posts;
 export default postSlice.reducer;

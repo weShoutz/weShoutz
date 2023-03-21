@@ -42,23 +42,19 @@ const Media: React.FC = () => {
   const { data: sessionData } = useSession();
   const image = sessionData?.user.image;
 
-  const postState = useSelector(selectPostState);
-  const dispatch = useDispatch();
+  // const postState = useSelector(selectPostState);
+  // const dispatch = useDispatch();
 
   
   // useEffect(() => {
-    if(posts.data){
-      const latestTen = posts.data.slice(0, 10);
-      //console.log(latestTen, 'line 52')
-      dispatch(setPostState(latestTen));
-      console.log('from line 54', postState)
-    }
+    // if(posts.data){
+    //   const latestTen = posts.data.slice(0, 10);
+    //   //console.log(latestTen, 'line 52')
+    //   // dispatch(setPostState(latestTen));
+    //   console.log('from line 54', postState)
+    // }
    
-
   // }, []);
-  
-
-
   const renderItems: JSX.Element[] = [];
 
   if (posts.data) {
@@ -83,12 +79,14 @@ const Media: React.FC = () => {
             // onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {/* {sessionData ? "Sign out" : "Sign in"} */}
-            Edit
-          </button>}
+            Edit </button>}
         </div>
       );
     });
   }
+
+  // dispatch(setPostState(renderItems));
+  console.log('hi');
 
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
