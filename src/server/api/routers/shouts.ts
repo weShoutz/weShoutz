@@ -66,16 +66,22 @@ export const shoutsRouter = createTRPCRouter({
     }
   }),
   postShout: protectedProcedure
-  .input(z.object({ created_at: z.string().datetime().optional(), message: z.string(), recipient: z.string() }))
-  .query(async ({ input, ctx }) => {
-    await ctx.prisma.post.create({
-      data: {
-        authorId: ctx.session?.user.id,
-        message: input.message,
-        recipient: input.recipient,
-        createdAt: input.created_at,
-      }
-    })
+  .input(z.object({ created_at: z.string().datetime().optional(), message: z.string(), recipient: z.string(), title: z.string() }))
+  .mutation(async ({ input, ctx }) => {
+    try {
+        console.log('attempting to add to database');
+        await ctx.prisma.post.create({
+          data: {
+            authorId: ctx.session?.user.id,
+            message: input.message,
+            recipient: input.recipient,
+            createdAt: input.created_at,
+            title: input.title,
+          }
+        })
+    } catch (error) {
+        console.log('error', error);
+    }
   }),
 
   getSecretMessage: protectedProcedure.query(( {}) => {

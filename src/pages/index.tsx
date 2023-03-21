@@ -6,7 +6,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 
 const Home: NextPage = () => {
-  //const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const msg = api.shouts.postShout.useQuery({message:'new', recipient:'salem', title:'hello'})
   const { data: sessionData } = useSession();
   return (
     <>
