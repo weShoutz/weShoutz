@@ -19,7 +19,26 @@ export const exampleRouter = createTRPCRouter({
     return ctx.prisma.example.findMany();
   }),
 
+  logUser: publicProcedure.query(async ({ ctx }) => {
+    if(ctx.session){
+      const { email } = ctx.session.user;
+      if(email){
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            email
+          },
+        })
+        return user;
+      }
+      
+    }
+    
+    
+     
+  }),
+
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+  
 });
