@@ -7,7 +7,13 @@ import {
 } from "@/server/api/trpc";
 import { type Post } from "@prisma/client";
 interface DisplayPost extends Post {
-    author:string
+    author:string;
+    authorId:string;
+    createdAt: Date;
+    id: number;
+    recipient: string;
+    title: string;
+    message: string;
 }
 /*
 model Post {
@@ -41,7 +47,8 @@ const postSchema = z.object({
     createdAt: z.string().datetime(),
     message: z.string(),
     recipient: z.string(),
-    authorId: z.string()
+    authorId: z.string(),
+    authorPic: z.string()
 });
 
 export const shoutsRouter = createTRPCRouter({
@@ -50,7 +57,7 @@ export const shoutsRouter = createTRPCRouter({
     try {
         const posts = await ctx.prisma.post.findMany();
         const res: DisplayPost[] = [];
-        for(let i = 0; i < posts.length; i++) {
+        for(let i = posts.length - 1; i >= 0; i--) {
             const author = await ctx.prisma.user.findFirstOrThrow({
                 where: {
                     id: posts[i]?.authorId}});
@@ -66,7 +73,7 @@ export const shoutsRouter = createTRPCRouter({
     }
   }),
   postShout: protectedProcedure
-  .input(z.object({ created_at: z.string().datetime().optional(), message: z.string(), recipient: z.string(), title: z.string() }))
+  .input(z.object({ created_at: z.string().datetime().optional(), message: z.string(), recipient: z.string(), title: z.string(), authorPic: z.string() }))
   .mutation(async ({ input, ctx }) => {
     try {
         console.log('attempting to add to database');
@@ -77,6 +84,7 @@ export const shoutsRouter = createTRPCRouter({
             recipient: input.recipient,
             createdAt: input.created_at,
             title: input.title,
+            authorPic: input.authorPic,
           }
         })
     } catch (error) {
