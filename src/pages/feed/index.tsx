@@ -45,13 +45,28 @@ export default Home;
 
 const Media: React.FC = () => {
   const { data: sessionData } = useSession();
-  //const image = sessionData?.user.image;
-  const [page, setPage] = useState(0);
-  const posts = api.shouts.getAll.useQuery({ id: page * 10 });
-  //const [render, setRender] = useState([]);
+  // const image = sessionData?.user.image;
+  const [page, setPage] = useState(0); 
+  const posts = api.shouts.getAll.useQuery({id: page * 10});
+  // const [render, setRender] = useState([]);
+  const [toggleEdit, setToggleEdit] = useState(-1);
+  // const [editMessage, setEditMessage] = useState({})
   const renderItems: JSX.Element[] = [];
-  const mutation = api.shouts.deleteShout.useMutation();
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  
+  const deleteMutation = api.shouts.deleteShout.useMutation();
 
+  const mutation = api.shouts.updateShout.useMutation();
+  const handleItemClick = (message: string, recipient: string, title: string) => {
+    mutation.mutate({ id: toggleEdit, message, recipient, title });
+    window.location.reload();
+  };
+
+  const handleClick = (message: string, recipient: string, title: string) => {
+    console.log('message:' + message, 'title:' + title);
+    handleItemClick(message, recipient, title);
+  };
   const handleNext = () => {
     setPage((prev) => prev + 1);
   };
@@ -64,18 +79,21 @@ const Media: React.FC = () => {
 
   const deleteItem = (id: number) => {
     if(Number(id)){
-      mutation.mutate({ id: Number(id) })
+      deleteMutation.mutate({ id: Number(id) })
       window.location.reload()
     }
   };
 
   if (posts.data) {
     posts.data.forEach((el, i) => {
-      console.log(el);
+      // console.log(el);
       renderItems.push(
         <div
+         
           key={`post-${i}`}
+         
           className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20"
+        
         >
           <p>{el.author.name}</p>
           <div>
@@ -87,15 +105,60 @@ const Media: React.FC = () => {
               ></img>
             )}
           </div>
-          <h3 className="text-2xl font-bold">{el.title}</h3>
-          <div className="text-lg">{el.message}</div>
+          <div>
+          {toggleEdit !== el.id ? (
+            <>
+              <h3 className="text-2xl font-bold">{el.title}</h3>
+              <div className="text-lg">{el.message}</div>
+            </>
+          ) : (
+            <>
+              <label className="sr-only">Your title</label>
+              <textarea
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+                id="title"
+                className="mb-[1rem] w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                placeholder="Create a Title"
+                value={title}
+                required
+              >
+              </textarea>
+              <label className="sr-only">Your comment</label>
+              <textarea
+                onChange={(e) => setMessage(e.target.value)}
+                id="comment"
+                className="w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                placeholder="Write a comment..."
+                value={message}
+                required
+              >
+              </textarea>
+              <button
+                onClick={(e) => {
+                  // e.preventDefault();
+                  handleClick(message, 'Salem', title);
+                }}
+                className="max-w-[8rem] rounded-full bg-lime-500 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+              >
+                Submit
+              </button>
+            </>
+          )}
           {sessionData &&
             sessionData.user &&
             sessionData.user.id &&
             sessionData.user.name === el.author.name && (
               <button
                 className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-                // onClick={sessionData ? () => void signOut() : () => void signIn()}
+                onClick={() => {
+                  console.log('in edit', el.id);
+                  setToggleEdit(el.id);
+                  // setEditMessage(el);
+                  setMessage(el.message);
+                  setTitle(el.title);
+                }}
               >
                 {/* {sessionData ? "Sign out" : "Sign in"} */}
                 Edit
@@ -108,10 +171,13 @@ const Media: React.FC = () => {
               <button
                 className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
                 onClick={() => deleteItem(el.id)}
+                // onClick={sessionData ? () => void signOut() : () => void signIn()}
               >
+                {/* {sessionData ? "Sign out" : "Sign in"} */}
                 Delete
               </button>
             )}
+            </div>
         </div>
       );
     });
@@ -120,14 +186,7 @@ const Media: React.FC = () => {
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
       {renderItems}
-      {renderItems.length > 0 && (
-        <button
-          className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-          onClick={handleNext}
-        >
-          Next Page
-        </button>
-      )}
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
       {page > 0 && (
         <button
           className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
@@ -136,6 +195,15 @@ const Media: React.FC = () => {
           Previous Page
         </button>
       )}
+      {renderItems.length > 0 && (
+        <button
+          className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={handleNext}
+        >
+          Next Page
+        </button>
+      )}
+      </div>
     </div>
   );
 };
