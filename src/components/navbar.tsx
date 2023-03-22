@@ -34,9 +34,9 @@ const Nav: React.FC = () => {
                 { sessionData && 
               <button
                 className="rounded-full bg-white/10 px-8 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
-                onClick={sessionData ? () => void signOut() : () => void signIn()}
+                onClick={sessionData ? () => window.location.href="/post" : () => void console.log('Void')}
               >
-                Create a Post
+                Create a Shoutz
               </button>
                 }
                 { sessionData && 
