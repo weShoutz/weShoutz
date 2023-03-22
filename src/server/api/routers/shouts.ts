@@ -147,19 +147,6 @@ export const shoutsRouter = createTRPCRouter({
               });
           return posts;
         }
-        // const posts = await ctx.prisma.post.findMany();
-        // const res: DisplayPost[] = [];
-        // for(let i = posts.length - 1; i >= 0; i--) {
-        //     const author = await ctx.prisma.user.findFirstOrThrow({
-        //         where: {
-        //             id: posts[i]?.authorId}});
-        //     const name = author !== null ? author.name : "";
-        //     // const validAuthor = postSchema.parse(author);
-        //     res.push({...posts[i], author: name});
-        //     console.log(author.name);
-        // }
-        // // console.log(res);
-        // return res;
     } catch (error) {
         
     }
@@ -195,6 +182,7 @@ export const shoutsRouter = createTRPCRouter({
             authorId: ctx.session?.user.id,
         }
       })
+
       return 'success';
     } catch (error) {
       console.log('error', error);

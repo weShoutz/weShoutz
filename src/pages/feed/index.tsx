@@ -3,11 +3,18 @@ import Head from "next/head";
 // import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
-import { ReactElement, JSXElementConstructor, ReactFragment, useEffect, useState, useRef } from "react";
-
+import {
+  ReactElement,
+  JSXElementConstructor,
+  ReactFragment,
+  useEffect,
+  useState,
+  useRef,
+  SyntheticEvent,
+} from "react";
 
 const Home: NextPage = () => {
-  //   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data: sessionData } = useSession();
 
   return (
     <>
@@ -19,11 +26,27 @@ const Home: NextPage = () => {
 
       <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#0b202f] to-[#243c1b]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[3rem]">
-            Latest <span className="text-[hsl(280,100%,70%)]">Shoutz</span>
-          </h1>
+          {sessionData ? (
+            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[3rem]">
+              Latest <span className="text-[hsl(280,100%,70%)]">Shoutz</span>
+            </h1>
+          ) : (
+            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[3rem]">
+              You are not{" "}
+              <span className="text-[hsl(280,100%,70%)]">Signed In</span>
+            </h1>
+          )}
           <div className="grid min-w-full grid-cols-1 gap-4 sm:grid-cols-1 md:gap-8">
-            <Media />
+            {sessionData ? (
+              <Media />
+            ) : (
+              <button
+                className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                onClick={() => (window.location.href = "/")}
+              >
+                Back
+              </button>
+            )}
           </div>
         </div>
       </main>
@@ -36,27 +59,37 @@ export default Home;
 const Media: React.FC = () => {
   const { data: sessionData } = useSession();
   const image = sessionData?.user.image;
-  const [page, setPage] = useState(0); 
-  const posts = api.shouts.getAll.useQuery({id: page * 10});
+  const [page, setPage] = useState(0);
+  const posts = api.shouts.getAll.useQuery({ id: page * 10 });
   const [render, setRender] = useState([]);
   const renderItems: JSX.Element[] = [];
+  const mutation = api.shouts.deleteShout.useMutation();
 
   const handleNext = () => {
-    setPage((prev) => prev + 1)
-  }
+    setPage((prev) => prev + 1);
+  };
 
   const handlePrev = () => {
-    if(page > 0){
-      setPage((prev) => prev - 1)
+    if (page > 0) {
+      setPage((prev) => prev - 1);
     }
-  }
+  };
 
-  
+  const deleteItem = (id: number) => {
+    if(Number(id)){
+      mutation.mutate({ id: Number(id) })
+      window.location.reload()
+    }
+  };
+
   if (posts.data) {
     posts.data.forEach((el, i) => {
       console.log(el);
       renderItems.push(
-        <div key={`post-${i}`} className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
+        <div
+          key={`post-${i}`}
+          className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20"
+        >
           <p>{el.author.name}</p>
           <div>
             {el.authorPic && (
@@ -69,42 +102,54 @@ const Media: React.FC = () => {
           </div>
           <h3 className="text-2xl font-bold">{el.title}</h3>
           <div className="text-lg">{el.message}</div>
-          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author.name && <button
-            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-            // onClick={sessionData ? () => void signOut() : () => void signIn()}
-          >
-            {/* {sessionData ? "Sign out" : "Sign in"} */}
-            Edit
-          </button>}
-          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author.name && <button
-            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-            // onClick={sessionData ? () => void signOut() : () => void signIn()}
-          >
-            {/* {sessionData ? "Sign out" : "Sign in"} */}
-            Delete
-          </button>}
+          {sessionData &&
+            sessionData.user &&
+            sessionData.user.id &&
+            sessionData.user.name === el.author.name && (
+              <button
+                className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                // onClick={sessionData ? () => void signOut() : () => void signIn()}
+              >
+                {/* {sessionData ? "Sign out" : "Sign in"} */}
+                Edit
+              </button>
+            )}
+          {sessionData &&
+            sessionData.user &&
+            sessionData.user.id &&
+            sessionData.user.name === el.author.name && (
+              <button
+                className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                onClick={() => deleteItem(el.id)}
+              >
+                {/* {sessionData ? "Sign out" : "Sign in"} */}
+                Delete
+              </button>
+            )}
         </div>
       );
     });
-     
   }
 
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
       {renderItems}
-      {renderItems.length > 0 && <button
-        className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={handleNext}
-      >  
-        Next Page
-      </button>}
-          {page > 0 && <button
-            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-            onClick={handlePrev}
-          >
-            Previous Page
-          </button>}
+      {renderItems.length > 0 && (
+        <button
+          className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={handleNext}
+        >
+          Next Page
+        </button>
+      )}
+      {page > 0 && (
+        <button
+          className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={handlePrev}
+        >
+          Previous Page
+        </button>
+      )}
     </div>
   );
 };
-
