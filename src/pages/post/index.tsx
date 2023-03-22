@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useState } from "react";
 
-const Home: NextPage = () => {
+const Shoutz: NextPage = () => {
   const { data: sessionData } = useSession();
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#0b202f] to-[#243c1b]">
           <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
             <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[3rem]">
-              Latest <span className="text-[hsl(280,100%,70%)]">Shoutz</span>
+              Create a <span className="text-[hsl(280,100%,70%)]">Shoutz</span>
             </h1>
             <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
               <form>
@@ -96,141 +96,11 @@ const Home: NextPage = () => {
         </main>
       ) : !sessionData && (
         <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#0b202f] to-[#243c1b]">
-          <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[3rem]">
-              You are not{" "}
-              <span className="text-[hsl(280,100%,70%)]">Signed In</span>
-            </h1>
-            <div className="flex min-w-full flex-col items-center gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
-              <button
-                className="max-w-[10rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-                onClick={() => (window.location.href = "/")}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
+
         </main>
       )}
     </>
   );
 };
 
-export default Home;
-
-const Shout: React.FC = () => {
-  const { data: sessionData } = useSession();
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-
-  //   const onTitleHandler = event => {
-  //     setTitle(event.target.value);
-  //  };
-
-  // const handleClick = (message: string, recipient: string, title: string) => {
-  //   console.log('message:' + message, 'title:' + title);
-  //   trpc.postShout.useQuery({ message, recipient, title })
-  // };
-  //const title = getElementById('title').
-
-  return (
-    <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
-      <form>
-        <div className="mb-4 w-full rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
-          <div className="rounded-t-lg bg-white px-4 py-2 dark:bg-gray-800">
-            <label className="sr-only">Your title</label>
-            <textarea
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-              id="title"
-              className="mb-[1rem] w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-              placeholder="Create a Title"
-              value={title}
-              required
-            ></textarea>
-            <label className="sr-only">Your comment</label>
-            <textarea
-              onChange={(e) => setMessage(e.target.value)}
-              id="comment"
-              className="w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-              placeholder="Write a comment..."
-              value={message}
-              required
-            ></textarea>
-          </div>
-          <div className="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                handleClick(message, "Salem", title);
-              }}
-              className="inline-flex items-center rounded-lg bg-blue-700 py-2.5 px-4 text-center text-xs font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900"
-            >
-              Create a Shoutz
-            </button>
-            <div className="flex space-x-1 pl-0 sm:pl-2">
-              <button
-                type="button"
-                className="inline-flex cursor-pointer justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                <svg
-                  aria-hidden="true"
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-                <span className="sr-only">Attach file</span>
-              </button>
-              <button
-                type="button"
-                className="inline-flex cursor-pointer justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                <svg
-                  aria-hidden="true"
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-                <span className="sr-only">Set location</span>
-              </button>
-              <button
-                type="button"
-                className="inline-flex cursor-pointer justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                <svg
-                  aria-hidden="true"
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-                <span className="sr-only">Upload image</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
-};
+export default Shoutz;

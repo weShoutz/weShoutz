@@ -1,21 +1,20 @@
 import { z } from "zod";
-
 import {
   createTRPCRouter,
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
-import { type Post } from "@prisma/client";
-import { Input } from "postcss";
-interface DisplayPost extends Post {
-    author:string;
-    authorId:string;
-    createdAt: Date;
-    id: number;
-    recipient: string;
-    title: string;
-    message: string;
-}
+// import { type Post } from "@prisma/client";
+// import { Input } from "postcss";
+// interface DisplayPost extends Post {
+//     author:string;
+//     authorId:string;
+//     createdAt: Date;
+//     id: number;
+//     recipient: string;
+//     title: string;
+//     message: string;
+// }
 /*
 model Post {
     id        Int      @id @default(autoincrement())
