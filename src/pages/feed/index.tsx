@@ -3,7 +3,8 @@ import Head from "next/head";
 // import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
-import { ReactElement, JSXElementConstructor, ReactFragment } from "react";
+import { ReactElement, JSXElementConstructor, ReactFragment, useEffect, useState, useRef } from "react";
+
 
 const Home: NextPage = () => {
   //   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -33,18 +34,30 @@ const Home: NextPage = () => {
 export default Home;
 
 const Media: React.FC = () => {
-  const posts = api.shouts.getAll.useQuery();
   const { data: sessionData } = useSession();
   const image = sessionData?.user.image;
-
+  const [page, setPage] = useState(0); 
+  const posts = api.shouts.getAll.useQuery({id: page * 10});
+  const [render, setRender] = useState([]);
   const renderItems: JSX.Element[] = [];
 
+  const handleNext = () => {
+    setPage((prev) => prev + 1)
+  }
+
+  const handlePrev = () => {
+    if(page > 0){
+      setPage((prev) => prev - 1)
+    }
+  }
+
+  
   if (posts.data) {
     posts.data.forEach((el, i) => {
       console.log(el);
       renderItems.push(
         <div key={`post-${i}`} className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
-          <p>{el.author}</p>
+          <p>{el.author.name}</p>
           <div>
             {el.authorPic && (
               <img
@@ -56,21 +69,42 @@ const Media: React.FC = () => {
           </div>
           <h3 className="text-2xl font-bold">{el.title}</h3>
           <div className="text-lg">{el.message}</div>
-          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author && <button
+          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author.name && <button
             className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
             // onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {/* {sessionData ? "Sign out" : "Sign in"} */}
             Edit
           </button>}
+          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author.name && <button
+            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            // onClick={sessionData ? () => void signOut() : () => void signIn()}
+          >
+            {/* {sessionData ? "Sign out" : "Sign in"} */}
+            Delete
+          </button>}
         </div>
       );
     });
+     
   }
 
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
       {renderItems}
+      {renderItems.length > 0 && <button
+        className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        onClick={handleNext}
+      >  
+        Next Page
+      </button>}
+          {page > 0 && <button
+            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            onClick={handlePrev}
+          >
+            Previous Page
+          </button>}
     </div>
   );
 };
+

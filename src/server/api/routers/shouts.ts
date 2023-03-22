@@ -25,7 +25,6 @@ model Post {
     author    User     @relation(fields: [authorId], references: [id])
     authorId  String
 }
-
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -36,7 +35,6 @@ model User {
     sessions      Session[]
     posts         Post[]
 }
-
 */
 const userSchema = z.object({
     id: z.string(),
@@ -54,16 +52,58 @@ const postSchema = z.object({
 
 export const shoutsRouter = createTRPCRouter({
 
+
+  getBatch: publicProcedure
+  .input(
+    z.object({
+      limit: z.number(),
+      // cursor is a reference to the last item in the previous batch
+      // it's used to fetch the next batch
+      cursor: z.number().nullish(),
+      skip: z.number().optional(),
+      categoryId: z.number().optional(),
+    })
+  )
+  .query(async({ ctx, input }) => {
+    console.log(input, 'input')
+    const { limit, skip, cursor } = input;
+    const items = await ctx.prisma.post.findMany({
+      take: limit + 1,
+      skip: skip,
+      cursor: cursor ? { id: cursor } : undefined,
+      orderBy: {
+        id: 'desc',
+      },
+      include: {
+        author: {
+            select: {
+                name:true,
+            }
+        }
+    },
+    });
+    let nextCursor: typeof cursor | undefined = undefined;
+    if (items.length > limit) {
+      const nextItem = items.pop(); // return the last item from the array
+      nextCursor = nextItem?.id;
+    }
+    return {
+      items,
+      nextCursor,
+    };
+  }),
+
   getAll: publicProcedure
   .input(z.object({ id: z.number().optional() }))
-  .query(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
     try {
+      console.log(input)
         // sort the data 
         //if start id not provided
         if(!input.id){
             //get the posts with the largest 15 ids
             const posts = await ctx.prisma.post.findMany({
-                take: 15,
+                take: 10,
                 orderBy: 
                 {
                 id: 'desc',
@@ -79,10 +119,19 @@ export const shoutsRouter = createTRPCRouter({
             return posts;
             
         } else {
+          const postLength = await ctx.prisma.post.findMany({
+            include: {
+                author: {
+                    select: {
+                        name:true,
+                    }
+                }
+            },
+        });
             const posts = await ctx.prisma.post.findMany({
-                take: 15,
+                take: 10,
                 cursor: {
-                  id: input.id
+                  id: (postLength.length - input.id)
                 },
                 orderBy:
                 {
