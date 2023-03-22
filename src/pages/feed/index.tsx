@@ -34,67 +34,25 @@ const Home: NextPage = () => {
 export default Home;
 
 const Media: React.FC = () => {
-  
   const { data: sessionData } = useSession();
   const image = sessionData?.user.image;
   const [page, setPage] = useState(0); 
-  const posts = api.shouts.getAll.useQuery({id: page});
+  const posts = api.shouts.getAll.useQuery({id: page * 10});
   const [render, setRender] = useState([]);
-
-
-  const onScroll = () => {
-    const scrollTop = document.documentElement.scrollTop
-    const scrollHeight = document.documentElement.scrollHeight
-   const clientHeight = document.documentElement.clientHeight
-  
-   if (scrollTop + clientHeight >= scrollHeight) {
-    //setPage(page + 1);
-    setPage(page + 1)
-    // const toShow = data?.pages[page]?.items;
-    // console.log(toShow, '67')
-    // console.log(page, 'page')
-   } 
-
-    }
-
-
-  useEffect(() => {
-   
-     window.addEventListener('scroll', onScroll)
-     return () => window.removeEventListener('scroll', onScroll)
-     })
-
-  // const { data, fetchNextPage } = api.shouts.getBatch.useInfiniteQuery(
-  //   {
-  //     limit: 10
-  //   },
-  //   {
-  //     getNextPageParam: (lastPage) => lastPage.nextCursor,
-  //   }
-  // );
-
-  
-
-    // const handleFetchNextPage =  () => {
-    //   fetchNextPage();
-    //   setPage((prev: number) => prev + 1);
-    // };
-
-    // const handleFetchPreviousPage = () => {
-    //   setPage((prev: number) => prev - 1);
-    // };
-
-    //   // data will be split in pages
-    
-    // const toShow = data?.pages[page]?.items;
-    // //setRender([...render, ...toShow])
-    
-    
-
   const renderItems: JSX.Element[] = [];
-  //console.log(posts, 'from 41')
+
+  const handleNext = () => {
+    setPage((prev) => prev + 1)
+  }
+
+  const handlePrev = () => {
+    if(page > 0){
+      setPage((prev) => prev - 1)
+    }
+  }
+
+  
   if (posts.data) {
-    
     posts.data.forEach((el, i) => {
       console.log(el);
       renderItems.push(
@@ -118,6 +76,13 @@ const Media: React.FC = () => {
             {/* {sessionData ? "Sign out" : "Sign in"} */}
             Edit
           </button>}
+          {sessionData && sessionData.user && sessionData.user.id && sessionData.user.name === el.author.name && <button
+            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            // onClick={sessionData ? () => void signOut() : () => void signIn()}
+          >
+            {/* {sessionData ? "Sign out" : "Sign in"} */}
+            Delete
+          </button>}
         </div>
       );
     });
@@ -127,6 +92,18 @@ const Media: React.FC = () => {
   return (
     <div className="flex min-w-full flex-col gap-5 rounded-xl bg-white/10 p-10 text-white hover:bg-white/20">
       {renderItems}
+      {renderItems.length > 0 && <button
+        className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        onClick={handleNext}
+      >  
+        Next Page
+      </button>}
+          {page > 0 && <button
+            className="max-w-[8rem] rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            onClick={handlePrev}
+          >
+            Previous Page
+          </button>}
     </div>
   );
 };
