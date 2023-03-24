@@ -11,7 +11,7 @@ weShoutz is a gated message board designed to enable classmates, intructors, tea
 
 ## Details about this product
 
-This product was bootstrapced with the T3 Stack to deliver end-to-end typesafety, a responsive design, and a seamless Oath experience. To learn more about the T3 stack, visit the [T3 Stack](https://create.t3.gg/) website.
+This product was bootstrapped with the T3 Stack to deliver end-to-end typesafety, a responsive design, and a seamless Oath experience. To learn more about the T3 stack, visit the [T3 Stack](https://create.t3.gg/) website.
 
 ## Built With
 
